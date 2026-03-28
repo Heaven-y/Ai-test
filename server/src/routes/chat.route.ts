@@ -2,17 +2,23 @@ import type { Request, Response } from "express";
 import { Router } from "express";
 import { ZodError } from "zod";
 
-import { chatMessageSchema } from "../schemas/chat.schema";
+import { chatDemoSchema, chatMessageSchema } from "../schemas/chat.schema";
 import { createDemoReply, createEchoReply } from "../services/chat.service";
 import type {
   ApiErrorResponse,
   ChatDemoResponse,
   ChatEchoResponse,
+  ChatHistoryMessage,
 } from "../types/api";
 
 function parseChatMessage(body: unknown) {
   const parsed = chatMessageSchema.parse(body);
   return parsed.message;
+}
+
+function parseChatHistory(body: unknown): ChatHistoryMessage[] {
+  const parsed = chatDemoSchema.parse(body);
+  return parsed.messages;
 }
 
 function buildValidationErrorResponse(error: ZodError): ApiErrorResponse {
@@ -58,17 +64,14 @@ export function createChatRouter() {
       response: Response<ChatDemoResponse | ApiErrorResponse>,
     ) => {
       try {
-        // zod 的 parse 是同步抛错
-        const message = parseChatMessage(request.body);
-        response.json(createDemoReply(message));
+        const messages = parseChatHistory(request.body);
+        response.json(createDemoReply(messages));
       } catch (error) {
-        // 参数校验失败时直接返回 400，避免把用户输入问题当成服务异常。
         if (error instanceof ZodError) {
           response.status(400).json(buildValidationErrorResponse(error));
           return;
         }
 
-        // 非校验类错误继续抛给全局错误处理中间件统一处理。
         throw error;
       }
     },

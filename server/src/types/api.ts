@@ -29,8 +29,13 @@ export interface ChatEchoResponse {
   assistantMessage: string;
 }
 
+export interface ChatHistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export interface ChatDemoRequest {
-  message: string;
+  messages: ChatHistoryMessage[];
 }
 
 export interface ChatDemoResponse {
@@ -39,6 +44,7 @@ export interface ChatDemoResponse {
   assistantMessage: string;
   intent: "learning_plan" | "project_scope" | "tech_choice" | "general";
   suggestions: string[];
+  historyCount: number;
 }
 
 export interface ApiErrorResponse {
