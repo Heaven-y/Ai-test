@@ -10,7 +10,6 @@ export const chatHistoryMessageSchema = z.object({
 });
 
 export const chatDemoSchema = z.object({
-  messages: z
-    .array(chatHistoryMessageSchema)
-    .min(1, "messages 至少需要一条消息。"),
+  systemPrompt: z.string().trim().min(1, "systemPrompt 不能为空。").optional(),
+  messages: z.array(chatHistoryMessageSchema).min(1, "messages 至少需要一条消息。"),
 });

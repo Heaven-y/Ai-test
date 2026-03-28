@@ -6,9 +6,9 @@ import { chatDemoSchema, chatMessageSchema } from "../schemas/chat.schema";
 import { createDemoReply, createEchoReply } from "../services/chat.service";
 import type {
   ApiErrorResponse,
+  ChatDemoRequest,
   ChatDemoResponse,
   ChatEchoResponse,
-  ChatHistoryMessage,
 } from "../types/api";
 
 function parseChatMessage(body: unknown) {
@@ -16,9 +16,8 @@ function parseChatMessage(body: unknown) {
   return parsed.message;
 }
 
-function parseChatHistory(body: unknown): ChatHistoryMessage[] {
-  const parsed = chatDemoSchema.parse(body);
-  return parsed.messages;
+function parseChatDemoRequest(body: unknown): ChatDemoRequest {
+  return chatDemoSchema.parse(body);
 }
 
 function buildValidationErrorResponse(error: ZodError): ApiErrorResponse {
@@ -64,8 +63,8 @@ export function createChatRouter() {
       response: Response<ChatDemoResponse | ApiErrorResponse>,
     ) => {
       try {
-        const messages = parseChatHistory(request.body);
-        response.json(createDemoReply(messages));
+        const payload = parseChatDemoRequest(request.body);
+        response.json(createDemoReply(payload));
       } catch (error) {
         if (error instanceof ZodError) {
           response.status(400).json(buildValidationErrorResponse(error));

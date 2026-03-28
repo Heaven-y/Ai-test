@@ -35,6 +35,7 @@ export interface ChatHistoryMessage {
 }
 
 export interface ChatDemoRequest {
+  systemPrompt?: string;
   messages: ChatHistoryMessage[];
 }
 
@@ -45,6 +46,7 @@ export interface ChatDemoResponse {
   intent: "learning_plan" | "project_scope" | "tech_choice" | "general";
   suggestions: string[];
   historyCount: number;
+  appliedSystemPrompt: string | null;
 }
 
 export interface ApiErrorResponse {
