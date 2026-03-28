@@ -39,11 +39,17 @@ export interface ChatDemoRequest {
   messages: ChatHistoryMessage[];
 }
 
+export type ChatDemoIntent =
+  | "learning_plan"
+  | "project_scope"
+  | "tech_choice"
+  | "general";
+
 export interface ChatDemoResponse {
   ok: true;
   userMessage: string;
   assistantMessage: string;
-  intent: "learning_plan" | "project_scope" | "tech_choice" | "general";
+  intent: ChatDemoIntent;
   suggestions: string[];
   historyCount: number;
   appliedSystemPrompt: string | null;
