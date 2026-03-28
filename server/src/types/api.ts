@@ -29,6 +29,18 @@ export interface ChatEchoResponse {
   assistantMessage: string;
 }
 
+export interface ChatDemoRequest {
+  message: string;
+}
+
+export interface ChatDemoResponse {
+  ok: true;
+  userMessage: string;
+  assistantMessage: string;
+  intent: "learning_plan" | "project_scope" | "tech_choice" | "general";
+  suggestions: string[];
+}
+
 export interface ApiErrorResponse {
   ok: false;
   error: {
