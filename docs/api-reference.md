@@ -119,7 +119,7 @@
 
 ## POST /api/chat/completions
 
-用途：更接近真实模型接口的聊天入口，当前已经接入 provider 分层，但默认仍由 demo provider 返回结果。
+用途：更接近真实模型接口的聊天入口，已经接入 provider 分层。
 
 请求体：
 
@@ -160,6 +160,10 @@
 - `model`：当前实际返回结果所使用的 provider 模型标识。
 - `output`：当前统一的模型输出结构。
 - `usage.messageCount`：本次请求中携带的消息数量。
+
+provider 说明：
+- 当 `CHAT_PROVIDER=demo` 时，返回本地演示结果。
+- 当 `CHAT_PROVIDER=glm` 时，会通过智谱开放平台发起真实聊天请求。
 
 ## 当前接口边界
 

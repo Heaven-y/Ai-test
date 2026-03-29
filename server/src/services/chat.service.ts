@@ -25,9 +25,9 @@ export function createDemoReply(input: {
   return buildDemoReply(input);
 }
 
-export function createCompletionsReply(
+export async function createCompletionsReply(
   input: ChatCompletionsRequest,
-): ChatCompletionsResponse {
+): Promise<ChatCompletionsResponse> {
   const provider = getChatCompletionProvider();
-  return provider.createCompletion(input);
+  return await provider.createCompletion(input);
 }

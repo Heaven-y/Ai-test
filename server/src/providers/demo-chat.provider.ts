@@ -7,7 +7,9 @@ import type { ChatCompletionProvider } from "./chat.provider";
 
 export function createDemoChatCompletionProvider(): ChatCompletionProvider {
   return {
-    createCompletion(input: ChatCompletionsRequest): ChatCompletionsResponse {
+    async createCompletion(
+      input: ChatCompletionsRequest,
+    ): Promise<ChatCompletionsResponse> {
       const demoReply = buildDemoReply({
         systemPrompt: input.systemPrompt,
         messages: input.messages,

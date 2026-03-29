@@ -64,7 +64,7 @@ export function createChatRouter() {
           return;
         }
 
-        // 非校验类错误继续抛给全局错误处理中间件统一处理。
+        // 非校验类错误继续交给全局错误处理中间件统一处理。
         throw error;
       }
     },
@@ -92,14 +92,15 @@ export function createChatRouter() {
 
   router.post(
     "/completions",
-    (
+    async (
       request: Request,
       response: Response<ChatCompletionsResponse | ApiErrorResponse>,
     ) => {
       try {
         const payload = parseChatCompletionsRequest(request.body);
-        // 这里先返回规则引擎生成的假模型结果，下一步再替换成真实 GLM 调用。
-        response.json(createCompletionsReply(payload));
+
+        // completions 现在已经可能发起真实网络请求，所以这里需要等待异步结果。
+        response.json(await createCompletionsReply(payload));
       } catch (error) {
         if (error instanceof ZodError) {
           response.status(400).json(buildValidationErrorResponse(error));

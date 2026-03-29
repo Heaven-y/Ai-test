@@ -35,11 +35,12 @@
 - 聊天请求校验
 - demo 规则分流
 - provider 分层骨架
+- `glm-chat.provider.ts` 真实接入智谱 HTTP 调用
 
 下一步要完成：
 
-- `glm-chat.provider.ts` 真实接入智谱 HTTP 调用
 - 聊天接口逐步向真实模型能力收敛
+- 前端最小聊天页面与后端联调
 
 ## 阶段 4：工具调用
 

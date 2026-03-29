@@ -1,6 +1,10 @@
+import { resolve } from "node:path";
 import { config as loadDotenv } from "dotenv";
 
-loadDotenv();
+const rootEnvPath = resolve(__dirname, "..", "..", ".env");
+
+// 固定从仓库根目录读取 .env，避免启动目录不同导致配置失效。
+loadDotenv({ path: rootEnvPath });
 
 type ChatProvider = "demo" | "glm";
 
@@ -32,7 +36,7 @@ export function getEnv() {
   const glmApiKey = process.env.GLM_API_KEY?.trim() || null;
   const glmModel = process.env.GLM_MODEL?.trim() || "glm-4.7-flash";
 
-  // 这里只做最小校验，确保后面切到 glm provider 时不会在运行期才发现缺 key。
+  // 这里只做最小校验，避免切到 glm provider 后才发现缺少关键配置。
   if (chatProvider === "glm" && !glmApiKey) {
     throw new Error("CHAT_PROVIDER=glm 时必须提供 GLM_API_KEY。");
   }
