@@ -55,6 +55,27 @@ export interface ChatDemoResponse {
   appliedSystemPrompt: string | null;
 }
 
+export interface ChatCompletionsRequest {
+  model?: string;
+  systemPrompt?: string;
+  messages: ChatHistoryMessage[];
+}
+
+export interface ChatCompletionsResponse {
+  ok: true;
+  id: string;
+  model: string;
+  createdAt: string;
+  output: {
+    role: "assistant";
+    content: string;
+  };
+  finishReason: "stop";
+  usage: {
+    messageCount: number;
+  };
+}
+
 export interface ApiErrorResponse {
   ok: false;
   error: {

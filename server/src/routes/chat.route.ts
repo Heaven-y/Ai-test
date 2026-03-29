@@ -2,10 +2,20 @@ import type { Request, Response } from "express";
 import { Router } from "express";
 import { ZodError } from "zod";
 
-import { chatDemoSchema, chatMessageSchema } from "../schemas/chat.schema";
-import { createDemoReply, createEchoReply } from "../services/chat.service";
+import {
+  chatCompletionsSchema,
+  chatDemoSchema,
+  chatMessageSchema,
+} from "../schemas/chat.schema";
+import {
+  createCompletionsReply,
+  createDemoReply,
+  createEchoReply,
+} from "../services/chat.service";
 import type {
   ApiErrorResponse,
+  ChatCompletionsRequest,
+  ChatCompletionsResponse,
   ChatDemoRequest,
   ChatDemoResponse,
   ChatEchoResponse,
@@ -18,6 +28,10 @@ function parseChatMessage(body: unknown) {
 
 function parseChatDemoRequest(body: unknown): ChatDemoRequest {
   return chatDemoSchema.parse(body);
+}
+
+function parseChatCompletionsRequest(body: unknown): ChatCompletionsRequest {
+  return chatCompletionsSchema.parse(body);
 }
 
 function buildValidationErrorResponse(error: ZodError): ApiErrorResponse {
@@ -40,7 +54,7 @@ export function createChatRouter() {
       response: Response<ChatEchoResponse | ApiErrorResponse>,
     ) => {
       try {
-        // zod 的 parse 是同步抛错
+        // zod 的 parse 是同步抛错，所以这里可以直接用 try...catch 处理校验失败。
         const message = parseChatMessage(request.body);
         response.json(createEchoReply(message));
       } catch (error) {
@@ -65,6 +79,27 @@ export function createChatRouter() {
       try {
         const payload = parseChatDemoRequest(request.body);
         response.json(createDemoReply(payload));
+      } catch (error) {
+        if (error instanceof ZodError) {
+          response.status(400).json(buildValidationErrorResponse(error));
+          return;
+        }
+
+        throw error;
+      }
+    },
+  );
+
+  router.post(
+    "/completions",
+    (
+      request: Request,
+      response: Response<ChatCompletionsResponse | ApiErrorResponse>,
+    ) => {
+      try {
+        const payload = parseChatCompletionsRequest(request.body);
+        // 这里先返回规则引擎生成的假模型结果，下一步再替换成真实 GLM 调用。
+        response.json(createCompletionsReply(payload));
       } catch (error) {
         if (error instanceof ZodError) {
           response.status(400).json(buildValidationErrorResponse(error));

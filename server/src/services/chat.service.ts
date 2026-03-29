@@ -1,26 +1,12 @@
-import { resolveDemoRule } from "./chat.rules";
+import { getChatCompletionProvider } from "../providers/chat.provider";
 import type {
+  ChatCompletionsRequest,
+  ChatCompletionsResponse,
   ChatDemoResponse,
   ChatEchoResponse,
   ChatHistoryMessage,
 } from "../types/api";
-
-interface DemoReplyInput {
-  systemPrompt?: string;
-  messages: ChatHistoryMessage[];
-}
-
-function getLatestUserMessage(messages: ChatHistoryMessage[]) {
-  return [...messages].reverse().find((message) => message.role === "user")?.content.trim() ?? "";
-}
-
-function buildPromptPrefix(systemPrompt?: string) {
-  if (!systemPrompt) {
-    return "";
-  }
-
-  return `当前系统提示词要求：${systemPrompt}。`;
-}
+import { buildDemoReply } from "./chat.reply-builder";
 
 export function createEchoReply(message: string): ChatEchoResponse {
   const normalizedMessage = message.trim();
@@ -32,18 +18,16 @@ export function createEchoReply(message: string): ChatEchoResponse {
   };
 }
 
-export function createDemoReply(input: DemoReplyInput): ChatDemoResponse {
-  const latestUserMessage = getLatestUserMessage(input.messages);
-  const promptPrefix = buildPromptPrefix(input.systemPrompt);
-  const resolvedRule = resolveDemoRule(latestUserMessage);
+export function createDemoReply(input: {
+  systemPrompt?: string;
+  messages: ChatHistoryMessage[];
+}): ChatDemoResponse {
+  return buildDemoReply(input);
+}
 
-  return {
-    ok: true,
-    userMessage: latestUserMessage,
-    assistantMessage: `${promptPrefix}${resolvedRule.assistantMessage}`,
-    intent: resolvedRule.intent,
-    suggestions: resolvedRule.suggestions,
-    historyCount: input.messages.length,
-    appliedSystemPrompt: input.systemPrompt ?? null,
-  };
+export function createCompletionsReply(
+  input: ChatCompletionsRequest,
+): ChatCompletionsResponse {
+  const provider = getChatCompletionProvider();
+  return provider.createCompletion(input);
 }

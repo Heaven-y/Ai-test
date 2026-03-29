@@ -13,3 +13,9 @@ export const chatDemoSchema = z.object({
   systemPrompt: z.string().trim().min(1, "systemPrompt 不能为空。").optional(),
   messages: z.array(chatHistoryMessageSchema).min(1, "messages 至少需要一条消息。"),
 });
+
+export const chatCompletionsSchema = z.object({
+  model: z.string().trim().min(1, "model 不能为空。").optional(),
+  systemPrompt: z.string().trim().min(1, "systemPrompt 不能为空。").optional(),
+  messages: z.array(chatHistoryMessageSchema).min(1, "messages 至少需要一条消息。"),
+});
