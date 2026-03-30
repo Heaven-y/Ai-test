@@ -23,6 +23,7 @@
 - `POST /api/chat/demo`
 - `POST /api/chat/completions`
 - 聊天 provider 分层骨架
+- 最小 React 聊天页面
 
 ## 文档入口
 

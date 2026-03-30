@@ -3,10 +3,15 @@
   "private": true,
   "version": "0.1.0",
   "workspaces": [
-    "server"
+    "server",
+    "client"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace server",
-    "build": "npm run build --workspace server"
+    "dev": "npm run dev:server",
+    "dev:server": "npm run dev --workspace server",
+    "dev:client": "npm run dev --workspace client",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "npm run build --workspace server",
+    "build:client": "npm run build --workspace client"
   }
 }
