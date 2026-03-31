@@ -92,6 +92,48 @@ code {
   gap: 0.75rem;
 }
 
+.debug-panels {
+  display: grid;
+  gap: 1rem;
+}
+
+.payload-panel {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 24px;
+  background: rgba(16, 36, 24, 0.06);
+  border: 1px solid rgba(16, 36, 24, 0.08);
+}
+
+.payload-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.payload-panel__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 251, 240, 0.8);
+  color: rgba(16, 36, 24, 0.72);
+  font-size: 0.76rem;
+}
+
+.payload-panel__code {
+  margin: 0;
+  overflow: auto;
+  border-radius: 18px;
+  padding: 1rem;
+  background: #173f2a;
+  color: #f8f2e3;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
 .hero-meta span,
 .status {
   display: inline-flex;
@@ -159,9 +201,21 @@ code {
   padding: 0 1.5rem 1.5rem;
 }
 
+.composer__section {
+  display: grid;
+  gap: 0.6rem;
+}
+
 .composer__label {
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+.composer__subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
 }
 
 .composer__input {
@@ -172,6 +226,10 @@ code {
   padding: 1rem;
   background: rgba(255, 252, 244, 0.92);
   min-height: 7rem;
+}
+
+.composer__input--prompt {
+  min-height: 5rem;
 }
 
 .composer__input:focus {
@@ -206,6 +264,15 @@ code {
   padding: 0.85rem 1.35rem;
   background: #173f2a;
   color: #fff6e9;
+  cursor: pointer;
+}
+
+.composer__secondary {
+  border: 1px solid rgba(16, 36, 24, 0.16);
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+  background: rgba(255, 252, 244, 0.92);
+  color: #173f2a;
   cursor: pointer;
 }
 
