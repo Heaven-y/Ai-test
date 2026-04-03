@@ -42,6 +42,18 @@ CHAT_PROVIDER=demo
 GLM_MODEL=glm-4.7-flash
 ```
 
+## DB_PATH
+
+SQLite 数据库文件路径，默认值为：
+
+```env
+DB_PATH=./data/app.db
+```
+
+说明：
+- 路径会固定相对仓库根目录解析。
+- 当前聊天会话和消息会保存在这个数据库文件里。
+
 ## 当前推荐配置
 
 本地开发建议先使用：
@@ -51,6 +63,7 @@ PORT=3001
 CHAT_PROVIDER=demo
 GLM_API_KEY=
 GLM_MODEL=glm-4.7-flash
+DB_PATH=./data/app.db
 ```
 
 当你准备好真实调用时，可以改成：
@@ -60,4 +73,5 @@ PORT=3001
 CHAT_PROVIDER=glm
 GLM_API_KEY=你的智谱密钥
 GLM_MODEL=glm-4.7-flash
+DB_PATH=./data/app.db
 ```

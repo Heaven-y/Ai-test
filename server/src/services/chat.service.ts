@@ -7,6 +7,16 @@ import type {
   ChatHistoryMessage,
 } from "../types/api";
 import { buildDemoReply } from "./chat.reply-builder";
+import { saveChatTurn } from "./chat-session.service";
+
+function getLatestUserMessage(messages: ChatHistoryMessage[]) {
+  return (
+    [...messages]
+      .reverse()
+      .find((message) => message.role === "user")
+      ?.content.trim() ?? ""
+  );
+}
 
 export function createEchoReply(message: string): ChatEchoResponse {
   const normalizedMessage = message.trim();
@@ -28,6 +38,21 @@ export function createDemoReply(input: {
 export async function createCompletionsReply(
   input: ChatCompletionsRequest,
 ): Promise<ChatCompletionsResponse> {
+  const sessionId = input.sessionId?.trim() || crypto.randomUUID();
+  const latestUserMessage = getLatestUserMessage(input.messages);
   const provider = getChatCompletionProvider();
-  return await provider.createCompletion(input);
+  const completion = await provider.createCompletion(input);
+
+  if (latestUserMessage) {
+    saveChatTurn({
+      sessionId,
+      userMessage: latestUserMessage,
+      assistantMessage: completion.output.content,
+    });
+  }
+
+  return {
+    ...completion,
+    sessionId,
+  };
 }

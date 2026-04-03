@@ -99,7 +99,7 @@ export function createChatRouter() {
       try {
         const payload = parseChatCompletionsRequest(request.body);
 
-        // completions 现在已经可能发起真实网络请求，所以这里需要等待异步结果。
+        // completions 会发起异步 provider 调用，所以这里需要等待结果。
         response.json(await createCompletionsReply(payload));
       } catch (error) {
         if (error instanceof ZodError) {

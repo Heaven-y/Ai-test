@@ -3,6 +3,7 @@ dist/
 client/dist/
 server/dist/
 .env
+data/
 coverage/
 package-lock.json
 *.tsbuildinfo

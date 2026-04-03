@@ -1,6 +1,6 @@
 import type {
+  ChatCompletionResult,
   ChatCompletionsRequest,
-  ChatCompletionsResponse,
 } from "../types/api";
 import type { ChatCompletionProvider } from "./chat.provider";
 
@@ -65,7 +65,7 @@ export function createGlmChatCompletionProvider(
   return {
     async createCompletion(
       input: ChatCompletionsRequest,
-    ): Promise<ChatCompletionsResponse> {
+    ): Promise<ChatCompletionResult> {
       const response = await fetch(GLM_CHAT_COMPLETIONS_URL, {
         method: "POST",
         headers: {

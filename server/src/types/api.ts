@@ -56,12 +56,13 @@ export interface ChatDemoResponse {
 }
 
 export interface ChatCompletionsRequest {
+  sessionId?: string;
   model?: string;
   systemPrompt?: string;
   messages: ChatHistoryMessage[];
 }
 
-export interface ChatCompletionsResponse {
+export interface ChatCompletionResult {
   ok: true;
   id: string;
   model: string;
@@ -74,6 +75,10 @@ export interface ChatCompletionsResponse {
   usage: {
     messageCount: number;
   };
+}
+
+export interface ChatCompletionsResponse extends ChatCompletionResult {
+  sessionId: string;
 }
 
 export interface ApiErrorResponse {

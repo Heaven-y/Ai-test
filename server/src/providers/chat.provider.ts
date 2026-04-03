@@ -1,7 +1,7 @@
 import { getEnv } from "../env";
 import type {
+  ChatCompletionResult,
   ChatCompletionsRequest,
-  ChatCompletionsResponse,
 } from "../types/api";
 import { createDemoChatCompletionProvider } from "./demo-chat.provider";
 import { createGlmChatCompletionProvider } from "./glm-chat.provider";
@@ -9,7 +9,7 @@ import { createGlmChatCompletionProvider } from "./glm-chat.provider";
 export interface ChatCompletionProvider {
   createCompletion(
     input: ChatCompletionsRequest,
-  ): Promise<ChatCompletionsResponse>;
+  ): Promise<ChatCompletionResult>;
 }
 
 let cachedProvider: ChatCompletionProvider | null = null;

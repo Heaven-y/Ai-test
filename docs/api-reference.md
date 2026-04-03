@@ -4,13 +4,13 @@
 
 ## 通用错误响应
 
-当请求参数不合法时，接口会返回：
+当请求参数不合法或服务处理失败时，接口会返回：
 
 ```json
 {
   "ok": false,
   "error": {
-    "code": "INVALID_MESSAGE",
+    "code": "错误码",
     "message": "具体错误信息"
   }
 }
@@ -26,13 +26,13 @@
 {
   "ok": true,
   "service": "ai-ticket-copilot-server",
-  "timestamp": "2026-03-29T08:00:00.000Z"
+  "timestamp": "2026-03-31T08:00:00.000Z"
 }
 ```
 
 ## GET /api/info
 
-用途：返回当前项目的基础信息，便于前端做启动页或状态展示。
+用途：返回当前项目的基础信息，便于前端展示当前项目状态。
 
 响应示例：
 
@@ -111,21 +111,16 @@
 }
 ```
 
-字段说明：
-- `intent`：当前演示规则判断出的意图类型。
-- `suggestions`：下一步建议列表。
-- `historyCount`：本次请求中携带的消息条数。
-- `appliedSystemPrompt`：实际应用的系统提示词，没有则为 `null`。
-
 ## POST /api/chat/completions
 
-用途：更接近真实模型接口的聊天入口，已经接入 provider 分层。
+用途：更接近真实模型接口的聊天入口，已经接入 provider 分层，并支持会话持久化。
 
 请求体：
 
 ```json
 {
-  "model": "demo-rule-engine-v1",
+  "sessionId": "可选，后续轮次继续带回上一次拿到的值",
+  "model": "glm-4.7-flash",
   "systemPrompt": "请简洁回答",
   "messages": [
     {
@@ -141,12 +136,13 @@
 ```json
 {
   "ok": true,
+  "sessionId": "1383390b-5b23-44e1-a1ef-7f8a655a9f05",
   "id": "chatcmpl_xxx",
   "model": "demo-rule-engine-v1",
-  "createdAt": "2026-03-29T08:00:00.000Z",
+  "createdAt": "2026-03-31T08:00:00.000Z",
   "output": {
     "role": "assistant",
-    "content": "当前系统提示词要求：请简洁回答。建议先按“后端接口、前端联调、模型接入、工具调用、知识库检索”这个顺序推进。先把每一层的最小闭环跑通，再逐步替换成真实能力。"
+    "content": "这是一个演示版聊天回复。当前还没有接入真实大模型，但接口结构已经接近后续真实聊天接口。"
   },
   "finishReason": "stop",
   "usage": {
@@ -156,6 +152,7 @@
 ```
 
 字段说明：
+- `sessionId`：聊天会话标识。首次请求可不传，后端会生成；后续请求继续带回这个值即可。
 - `id`：本次聊天结果的唯一标识。
 - `model`：当前实际返回结果所使用的 provider 模型标识。
 - `output`：当前统一的模型输出结构。
@@ -165,6 +162,10 @@ provider 说明：
 - 当 `CHAT_PROVIDER=demo` 时，返回本地演示结果。
 - 当 `CHAT_PROVIDER=glm` 时，会通过智谱开放平台发起真实聊天请求。
 
+会话说明：
+- `POST /api/chat/completions` 现在会把最新一轮用户消息和 assistant 回复保存到 `SQLite`。
+- 当前只保存最新一轮，不会把前端传来的整段历史重复写入数据库。
+
 ## 当前接口边界
 
 当前接口文档只覆盖已经实现的基础能力：
@@ -173,5 +174,6 @@ provider 说明：
 - 最小聊天接口
 - 演示版聊天接口
 - provider 分层后的 completions 接口
+- 基础会话持久化
 
-后续一旦新增真实 GLM 调用、会话管理、工具调用或知识库接口，必须同步更新本文件。
+后续一旦新增真实会话历史查询、工具调用或知识库接口，必须同步更新本文件。

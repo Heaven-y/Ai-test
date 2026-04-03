@@ -24,6 +24,8 @@
 - `POST /api/chat/completions`
 - 聊天 provider 分层骨架
 - 最小 React 聊天页面
+- 请求与响应调试面板
+- SQLite 会话持久化基础
 
 ## 文档入口
 

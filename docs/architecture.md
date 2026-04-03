@@ -10,7 +10,7 @@
 
 ## 当前后端分层
 
-当前后端已经明确采用“模块化单体”结构，不做微服务。
+当前后端采用“模块化单体”结构，不做微服务。
 
 已落地的基础分层如下：
 
@@ -21,6 +21,7 @@
 - `types`：负责接口类型定义。
 - `middlewares`：负责 404 和全局错误处理。
 - `env`：负责环境变量读取与校验。
+- `infra`：负责数据库连接和基础设施初始化。
 
 前端当前采用：
 
@@ -33,9 +34,10 @@
 
 1. `route` 接收请求。
 2. `schema` 校验请求体是否合法。
-3. `service` 调用 `provider` 生成统一的聊天结果。
-4. `provider` 根据环境变量决定走 demo 还是 glm 分支。
-5. 最终由路由返回统一响应结构。
+3. `service` 生成或续用 `sessionId`。
+4. `service` 调用 `provider` 获取聊天结果。
+5. `service` 把最新一轮用户消息和 assistant 回复写入 `SQLite`。
+6. 路由返回统一响应结构。
 
 ## 为什么会有多个 provider 文件
 
@@ -54,7 +56,7 @@
 
 - 前端：`React 19 + TypeScript`
 - 后端：`Node.js + Express 5`
-- 数据库：`SQLite`
+- 数据库：`SQLite + better-sqlite3`
 - 检索：后续首版先用 `SQLite FTS`
 - 模型：`GLM-4.7-Flash`
 
@@ -71,17 +73,20 @@
 - 基础 completions 接口
 - provider 分层骨架
 - GLM provider 真实 HTTP 调用入口
+- SQLite 会话与消息落库
 
 当前前端已经完成：
 
 - 最小聊天页面
 - 消息输入与发送
 - 调用 `/api/chat/completions`
-- 展示返回结果与错误信息
+- 展示请求和响应结构
+- 自动续用 `sessionId`
 
 ## 后续演进方向
 
 下一步会继续沿着当前分层推进，而不是推倒重来：
 
-- 再补会话、工具调用和知识库能力
+- 增加会话历史读取接口
+- 再补工具调用和知识库能力
 - 文档和接口保持同步更新

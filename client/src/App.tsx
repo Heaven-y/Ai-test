@@ -8,6 +8,7 @@ interface ChatMessage {
 
 interface ChatCompletionResponse {
   ok: true;
+  sessionId: string;
   id: string;
   model: string;
   createdAt: string;
@@ -29,6 +30,12 @@ interface ApiErrorResponse {
   };
 }
 
+interface ChatRequestPayload {
+  sessionId?: string;
+  systemPrompt?: string;
+  messages: Array<Pick<ChatMessage, "role" | "content">>;
+}
+
 const DEFAULT_SYSTEM_PROMPT = "请用导师口吻回答，并保持简洁、直接。";
 
 function createMessage(role: ChatMessage["role"], content: string): ChatMessage {
@@ -39,14 +46,10 @@ function createMessage(role: ChatMessage["role"], content: string): ChatMessage 
   };
 }
 
-interface ChatRequestPayload {
-  systemPrompt?: string;
-  messages: Array<Pick<ChatMessage, "role" | "content">>;
-}
-
 function buildChatRequestPayload(
   messages: ChatMessage[],
   systemPrompt: string,
+  sessionId: string | null,
 ): ChatRequestPayload {
   const normalizedSystemPrompt = systemPrompt.trim();
   const payload: ChatRequestPayload = {
@@ -61,6 +64,10 @@ function buildChatRequestPayload(
     payload.systemPrompt = normalizedSystemPrompt;
   }
 
+  if (sessionId) {
+    payload.sessionId = sessionId;
+  }
+
   return payload;
 }
 
@@ -73,6 +80,7 @@ export default function App() {
   ]);
   const [draft, setDraft] = useState("");
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const [latestRequestPayload, setLatestRequestPayload] =
     useState<ChatRequestPayload | null>(null);
   const [latestResponsePayload, setLatestResponsePayload] = useState<
@@ -92,7 +100,11 @@ export default function App() {
 
     const userMessage = createMessage("user", nextDraft);
     const nextMessages = [...messages, userMessage];
-    const payload = buildChatRequestPayload(nextMessages, systemPrompt);
+    const payload = buildChatRequestPayload(
+      nextMessages,
+      systemPrompt,
+      sessionId,
+    );
 
     setMessages(nextMessages);
     setLatestRequestPayload(payload);
@@ -125,6 +137,7 @@ export default function App() {
         return;
       }
 
+      setSessionId(result.sessionId);
       setMessages((currentMessages) => [
         ...currentMessages,
         createMessage("assistant", result.output.content),
@@ -152,6 +165,7 @@ export default function App() {
           <span>前端：React 19 + Vite</span>
           <span>后端：Express 5</span>
           <span>模型入口：GLM Provider</span>
+          <span>会话：{sessionId ?? "首次发送后生成"}</span>
         </div>
 
         <div className="debug-panels">
@@ -233,7 +247,7 @@ export default function App() {
               rows={3}
             />
             <p className="composer__hint">
-              这里改的是整条聊天请求的系统提示词。现在你已经可以直接观察它如何进入后端 payload。
+              这里改的是整条聊天请求的系统提示词。后端生成 sessionId 后，后续请求也会自动带上它。
             </p>
           </div>
 
@@ -251,7 +265,7 @@ export default function App() {
 
           <div className="composer__footer">
             <p className="composer__hint">
-              现在 system prompt 来自上面的输入框，不再是前端写死常量。
+              现在请求 payload 里会在第二轮开始自动带上 sessionId。
             </p>
             <button className="composer__submit" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "发送中..." : "发送消息"}

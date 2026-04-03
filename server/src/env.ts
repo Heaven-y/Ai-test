@@ -2,6 +2,7 @@ import { resolve } from "node:path";
 import { config as loadDotenv } from "dotenv";
 
 const rootEnvPath = resolve(__dirname, "..", "..", ".env");
+const projectRootPath = resolve(__dirname, "..", "..");
 
 // 固定从仓库根目录读取 .env，避免启动目录不同导致配置失效。
 loadDotenv({ path: rootEnvPath });
@@ -35,6 +36,10 @@ export function getEnv() {
   const chatProvider = parseChatProvider(process.env.CHAT_PROVIDER);
   const glmApiKey = process.env.GLM_API_KEY?.trim() || null;
   const glmModel = process.env.GLM_MODEL?.trim() || "glm-4.7-flash";
+  const dbPath = resolve(
+    projectRootPath,
+    process.env.DB_PATH?.trim() || "./data/app.db",
+  );
 
   // 这里只做最小校验，避免切到 glm provider 后才发现缺少关键配置。
   if (chatProvider === "glm" && !glmApiKey) {
@@ -46,5 +51,6 @@ export function getEnv() {
     chatProvider,
     glmApiKey,
     glmModel,
+    dbPath,
   };
 }

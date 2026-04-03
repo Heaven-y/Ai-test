@@ -1,7 +1,7 @@
 import { buildDemoReply } from "../services/chat.reply-builder";
 import type {
+  ChatCompletionResult,
   ChatCompletionsRequest,
-  ChatCompletionsResponse,
 } from "../types/api";
 import type { ChatCompletionProvider } from "./chat.provider";
 
@@ -9,7 +9,7 @@ export function createDemoChatCompletionProvider(): ChatCompletionProvider {
   return {
     async createCompletion(
       input: ChatCompletionsRequest,
-    ): Promise<ChatCompletionsResponse> {
+    ): Promise<ChatCompletionResult> {
       const demoReply = buildDemoReply({
         systemPrompt: input.systemPrompt,
         messages: input.messages,
